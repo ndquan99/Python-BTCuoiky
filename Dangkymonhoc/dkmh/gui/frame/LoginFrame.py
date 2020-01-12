@@ -1,5 +1,7 @@
 from tkinter import *
 from tkinter import Frame
+from dkmh.database.Database import DB
+from dkmh.user.user import User
 
 
 class LoginFrame(Frame):
@@ -7,6 +9,7 @@ class LoginFrame(Frame):
     def __init__(self, window, wid, hei):
         super().__init__()
 #         self.pack()
+        self.db = DB()
         self.winlg = window
         self["height"] = hei
         self["width"] = wid
@@ -32,15 +35,16 @@ class LoginFrame(Frame):
         btnLogin.place(x=464, y=300)
         
     def logsuccess(self):
-        usn = self.user.get()
-        pw = self.pw.get()
+        usn = str(self.user.get())
+        pw = str(self.pw.get())
+        pq = self.db.checkUser(usn, pw)
         if len(usn)==0 or len(pw)==0:
             return
-        elif usn=="admin" and pw=="123":
-            self.winlg.changeToDKMH(0)
+        elif pq==1:
+            self.winlg.changeToDKMH(0, User(usn, pw, pq))
             self.lblerror['text'] = "" 
-        elif usn=="quan" and pw=="123":
-            self.winlg.changeToDKMH(1)
+        elif pq==2:
+            self.winlg.changeToDKMH(1, User(usn, pw, pq))
             self.lblerror['text'] = ""
         else:
             self.lblerror['text'] = "Sai tài khoản hoặc mật khẩu !"
